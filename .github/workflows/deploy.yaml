@@ -54,6 +54,7 @@ jobs:
 
             docker image prune -f
 
+            
             docker run -d \
               --name dashboard \
               --restart unless-stopped \
