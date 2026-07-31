@@ -33,3 +33,36 @@
         name: ubuntu
         groups: docker
         append: yes
+
+    - name: Install maven
+      apt:
+        name: maven
+        state: present    
+
+    - name: Clone GitHub repository
+      git:
+        repo: https://github.com/Anu0shree/cloud-devops-dashboard.git
+        dest: /home/ubuntu/cloud-devops-dashboard
+        version: main
+        force: yes
+
+    - name: Build spring boot application
+      command: mvn clean package
+      args:
+        chdir: /home/ubuntu/cloud-devops-dashboard
+
+    - name: Build docker image
+      command: docker build -t cloud-devops-dashboard .
+      args:
+        chdir: /home/ubuntu/cloud-devops-dashboard
+
+    - name: stop existing container
+      command: docker stop dashboard
+      ignore_errors: yes
+
+    - name: remove existing container
+      command: docker rm dashboard
+      ignore_errors: yes
+
+    - name: Run docker container
+      command: docker run -d --name dashboard -p 8080:8080 cloud-devops-dashboard
