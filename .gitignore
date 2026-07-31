@@ -56,3 +56,13 @@ Thumbs.db
 
 # Temporary
 *.tmp
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform.tfstate
+terraform.tfstate.backup
+
+# Ansible inventory
+ansible/inventory
