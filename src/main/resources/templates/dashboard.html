@@ -175,13 +175,11 @@
                 Prometheus Metrics
             </a>
 
-            <button class="btn btn-warning me-2" disabled>
-                Grafana (Coming Soon)
-            </button>
-
-            <button class="btn btn-info" disabled>
-                Docker (Coming Soon)
-            </button>
+            <a th:href="${grafanaUrl}"
+               class="btn btn-warning"
+               target="_blank">
+                Grafana
+        </a>
 
         </div>
 
