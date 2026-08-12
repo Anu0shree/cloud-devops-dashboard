@@ -47,5 +47,6 @@ public class HomeController {
         model.addAttribute("grafanaUrl", grafanaUrl);
 
         return "dashboard";
+        
     }
 }
