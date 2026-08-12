@@ -5,9 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
 import java.time.Duration;
 
 @Controller
@@ -25,6 +23,15 @@ public class DashboardController {
     @Value("${app.grafana-url:http://localhost:3000}")
     private String grafanaUrl;
 
+    /*
+     * EC2 hostname is supplied through the APP_HOSTNAME
+     * environment variable by GitHub Actions.
+     *
+     * We do NOT use InetAddress.getLocalHost() here because
+     * that returns the Docker container hostname.
+     */
+    @Value("${app.hostname:Unavailable}")
+    private String hostname;
 
     @GetMapping("/")
     public String dashboard(Model model) {
@@ -42,19 +49,13 @@ public class DashboardController {
         model.addAttribute("environment", environment);
         model.addAttribute("port", serverPort);
 
-
         /*
          * -----------------------------------------
-         * Host information
+         * EC2 Infrastructure
          * -----------------------------------------
-         *
-         * Only hostname is displayed.
-         *
-         * Private/Public IP addresses are intentionally
-         * NOT exposed by the dashboard.
          */
 
-        model.addAttribute("hostname", getHostname());
+        model.addAttribute("hostname", hostname);
 
         model.addAttribute(
                 "os",
@@ -66,10 +67,9 @@ public class DashboardController {
                 runtime.availableProcessors()
         );
 
-
         /*
          * -----------------------------------------
-         * JVM information
+         * JVM Information
          * -----------------------------------------
          */
 
@@ -102,7 +102,6 @@ public class DashboardController {
                 )
         );
 
-
         /*
          * -----------------------------------------
          * Monitoring
@@ -114,28 +113,8 @@ public class DashboardController {
                 grafanaUrl
         );
 
-
         return "dashboard";
     }
-
-
-    /*
-     * Get hostname safely.
-     */
-    private String getHostname() {
-
-        try {
-
-            return InetAddress
-                    .getLocalHost()
-                    .getHostName();
-
-        } catch (IOException e) {
-
-            return "Unavailable";
-        }
-    }
-
 
     /*
      * Convert bytes into MB/GB.
@@ -160,7 +139,6 @@ public class DashboardController {
         );
     }
 
-
     /*
      * Format JVM uptime.
      */
@@ -179,7 +157,6 @@ public class DashboardController {
 
         long seconds =
                 duration.getSeconds() % 60;
-
 
         if (days > 0) {
 
