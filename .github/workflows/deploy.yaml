@@ -1,4 +1,4 @@
-name: Build and Deploy Cloud DevOps Dashboard
+name: Deploy Dashboard Application
 
 on:
 
@@ -8,193 +8,222 @@ on:
 
   workflow_dispatch:
 
+concurrency:
+  group: deploy-dashboard
+  cancel-in-progress: true
 
 jobs:
 
-  build-and-deploy:
+  # =========================================================
+  # BUILD AND PUSH
+  # =========================================================
+
+  build-and-push:
 
     runs-on: ubuntu-latest
 
     steps:
 
-
-      # =========================================
-      # Checkout
-      # =========================================
+      # -------------------------------------------------------
+      # Checkout latest code
+      # -------------------------------------------------------
 
       - name: Checkout source code
         uses: actions/checkout@v4
 
 
-      # =========================================
-      # Java
-      # =========================================
+      # -------------------------------------------------------
+      # Setup Java 17
+      # -------------------------------------------------------
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
-
         with:
           distribution: temurin
           java-version: '17'
           cache: maven
 
 
-      # =========================================
-      # Build
-      # =========================================
+      # -------------------------------------------------------
+      # Build Spring Boot application
+      # -------------------------------------------------------
 
-      - name: Build Spring Boot application
+      - name: Build Spring Boot Application
         run: |
           mvn clean package -DskipTests
 
 
-      # =========================================
-      # Docker login
-      # =========================================
+      # -------------------------------------------------------
+      # Login to Docker Hub
+      # -------------------------------------------------------
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
-
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
 
-      # =========================================
-      # Docker image
-      # =========================================
+      # -------------------------------------------------------
+      # Build and Push Docker Image
+      #
+      # Two tags are created:
+      #
+      # latest
+      # SHA of the Git commit
+      # -------------------------------------------------------
 
-      - name: Build Docker image
-        run: |
-          docker build \
-            -t ${{ secrets.DOCKER_USERNAME }}/cloud-devops-dashboard:${{ github.sha }} .
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
 
 
-      # =========================================
-      # Push Docker image
-      # =========================================
+  # =========================================================
+  # DEPLOY TO EC2
+  # =========================================================
 
-      - name: Push Docker image
-        run: |
-          docker push \
-            ${{ secrets.DOCKER_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
+  deploy:
 
+    needs: build-and-push
 
-      # =========================================
-      # Deploy to EC2
-      # =========================================
+    runs-on: ubuntu-latest
 
-      - name: Deploy to EC2
+    steps:
+
+      - name: Deploy Application to EC2
         uses: appleboy/ssh-action@v1.2.0
 
         with:
 
           host: ${{ secrets.EC2_HOST }}
 
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ${{ secrets.EC2_USER }}
 
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
 
-            set -e
+            echo "========================================="
+            echo "Starting Dashboard Deployment"
+            echo "========================================="
 
-            IMAGE="${{ secrets.DOCKER_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}"
-
-
-            echo "======================================"
-
-            echo "Deploying Cloud DevOps Dashboard"
-
-            echo "Image: $IMAGE"
-
-            echo "======================================"
+            echo "Git commit:"
+            echo "${{ github.sha }}"
 
 
-            # -----------------------------------
-            # Get the REAL EC2 hostname
-            # -----------------------------------
+            # -------------------------------------------------
+            # Show EC2 hostname
+            # -------------------------------------------------
 
-            EC2_HOSTNAME=$(hostname)
-
-            echo "EC2 hostname: $EC2_HOSTNAME"
-
-
-            # -----------------------------------
-            # Pull latest image
-            # -----------------------------------
-
-            sudo docker pull "$IMAGE"
+            echo "EC2 hostname:"
+            hostname
 
 
-            # -----------------------------------
+            # -------------------------------------------------
+            # Pull exact image created by this GitHub run
+            # -------------------------------------------------
+
+            echo "Pulling Docker image..."
+
+            sudo docker pull \
+              ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
+
+
+            # -------------------------------------------------
+            # Stop old container
+            # -------------------------------------------------
+
+            echo "Stopping old dashboard container..."
+
+            sudo docker stop dashboard || true
+
+
+            # -------------------------------------------------
             # Remove old container
-            # -----------------------------------
+            # -------------------------------------------------
 
-            sudo docker rm -f dashboard 2>/dev/null || true
+            echo "Removing old dashboard container..."
 
-
-            # -----------------------------------
-            # Remove unused Docker resources
-            # -----------------------------------
-
-            sudo docker system prune -f
+            sudo docker rm dashboard || true
 
 
-            # -----------------------------------
+            # -------------------------------------------------
+            # Remove unused Docker images
+            # -------------------------------------------------
+
+            echo "Cleaning unused Docker images..."
+
+            sudo docker image prune -f
+
+
+            # -------------------------------------------------
             # Start new container
-            # -----------------------------------
+            # -------------------------------------------------
+
+            echo "Starting new dashboard container..."
 
             sudo docker run -d \
               --name dashboard \
               --restart unless-stopped \
               -p 8080:8080 \
-              -e APP_HOSTNAME="$EC2_HOSTNAME" \
               -e APP_ENVIRONMENT="AWS EC2" \
-              -e GRAFANA_URL="${{ secrets.GRAFANA_URL }}" \
-              "$IMAGE"
+              -e APP_HOSTNAME="$(hostname)" \
+              ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
 
 
-            # -----------------------------------
-            # Wait for application
-            # -----------------------------------
+            # -------------------------------------------------
+            # Wait for Spring Boot
+            # -------------------------------------------------
 
-            echo "Waiting for application..."
+            echo "Waiting for application startup..."
 
-            sleep 10
+            sleep 15
 
 
-            # -----------------------------------
-            # Show container
-            # -----------------------------------
+            # -------------------------------------------------
+            # Show container status
+            # -------------------------------------------------
+
+            echo "========================================="
+            echo "Docker Container Status"
+            echo "========================================="
 
             sudo docker ps
 
 
-            # -----------------------------------
-            # Verify hostname environment variable
-            # -----------------------------------
+            # -------------------------------------------------
+            # Show application logs
+            # -------------------------------------------------
 
-            echo "Container hostname configuration:"
+            echo "========================================="
+            echo "Application Logs"
+            echo "========================================="
 
-            sudo docker exec dashboard \
-              sh -c 'echo APP_HOSTNAME=$APP_HOSTNAME'
-
-
-            # -----------------------------------
-            # Health check
-            # -----------------------------------
-
-            echo "Health check:"
-
-            curl --fail \
-              http://localhost:8080/actuator/health
+            sudo docker logs --tail 50 dashboard
 
 
-            echo ""
+            # -------------------------------------------------
+            # Verify container is running
+            # -------------------------------------------------
 
-            echo "======================================"
+            if sudo docker ps --format '{{.Names}}' | grep -q '^dashboard$'; then
 
-            echo "Deployment successful"
+              echo "========================================="
+              echo "Deployment Successful"
+              echo "========================================="
 
-            echo "======================================"
+            else
+
+              echo "========================================="
+              echo "Deployment Failed"
+              echo "========================================="
+
+              exit 1
+
+            fi
