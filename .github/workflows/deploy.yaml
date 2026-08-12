@@ -5,28 +5,56 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+
 concurrency:
   group: deploy-dashboard
   cancel-in-progress: true
 
 jobs:
 
+  # =========================================================
+  # BUILD AND PUSH
+  # =========================================================
+
   build-and-push:
+
     runs-on: ubuntu-latest
 
     steps:
 
+      # -------------------------------------------------------
+      # Checkout latest code
+      # -------------------------------------------------------
+
       - name: Checkout source code
         uses: actions/checkout@v4
+
+
+      # -------------------------------------------------------
+      # Setup Java 17
+      # -------------------------------------------------------
 
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+          cache: maven
+
+
+      # -------------------------------------------------------
+      # Build Spring Boot application
+      # -------------------------------------------------------
 
       - name: Build Spring Boot Application
-        run: mvn clean package -DskipTests
+        run: |
+          mvn clean package -DskipTests
+
+
+      # -------------------------------------------------------
+      # Login to Docker Hub
+      # -------------------------------------------------------
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -34,39 +62,164 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+
+      # -------------------------------------------------------
+      # Build and Push Docker Image
+      #
+      # Two tags are created:
+      #
+      # latest
+      # SHA of the Git commit
+      #
+      # Example:
+      #
+      # cloud-devops-dashboard:latest
+      # cloud-devops-dashboard:f0cf500ee7e7...
+      # -------------------------------------------------------
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
 
 
+  # =========================================================
+  # DEPLOY TO EC2
+  # =========================================================
+
   deploy:
+
     needs: build-and-push
+
     runs-on: ubuntu-latest
 
     steps:
 
       - name: Deploy Application to EC2
+
         uses: appleboy/ssh-action@v1.2.0
+
         with:
+
           host: ${{ secrets.EC2_HOST }}
+
           username: ${{ secrets.EC2_USER }}
+
           key: ${{ secrets.EC2_SSH_KEY }}
+
           script: |
 
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
+            echo "========================================="
+            echo "Starting Dashboard Deployment"
+            echo "========================================="
 
-            docker stop dashboard || true
-            docker rm dashboard || true
+            echo "Git commit:"
+            echo "${{ github.sha }}"
 
-            docker image prune -f
 
-            docker run -d \
+            # -------------------------------------------------
+            # Pull exact image created by this GitHub run
+            # -------------------------------------------------
+
+            echo "Pulling Docker image..."
+
+            sudo docker pull \
+              ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
+
+
+            # -------------------------------------------------
+            # Stop old container
+            # -------------------------------------------------
+
+            echo "Stopping old dashboard container..."
+
+            sudo docker stop dashboard || true
+
+
+            # -------------------------------------------------
+            # Remove old container
+            # -------------------------------------------------
+
+            echo "Removing old dashboard container..."
+
+            sudo docker rm dashboard || true
+
+
+            # -------------------------------------------------
+            # Remove unused Docker images
+            # -------------------------------------------------
+
+            echo "Cleaning unused Docker images..."
+
+            sudo docker image prune -f
+
+
+            # -------------------------------------------------
+            # Start new container
+            # -------------------------------------------------
+
+            echo "Starting new dashboard container..."
+
+            sudo docker run -d \
               --name dashboard \
               --restart unless-stopped \
               -p 8080:8080 \
+              -e APP_ENVIRONMENT="AWS EC2" \
               ${{ secrets.DOCKERHUB_USERNAME }}/cloud-devops-dashboard:${{ github.sha }}
+
+
+            # -------------------------------------------------
+            # Wait for Spring Boot
+            # -------------------------------------------------
+
+            echo "Waiting for application startup..."
+
+            sleep 15
+
+
+            # -------------------------------------------------
+            # Show container status
+            # -------------------------------------------------
+
+            echo "========================================="
+            echo "Docker Container Status"
+            echo "========================================="
+
+            sudo docker ps
+
+
+            # -------------------------------------------------
+            # Show application logs
+            # -------------------------------------------------
+
+            echo "========================================="
+            echo "Application Logs"
+            echo "========================================="
+
+            sudo docker logs --tail 50 dashboard
+
+
+            # -------------------------------------------------
+            # Verify container is running
+            # -------------------------------------------------
+
+            if sudo docker ps --format '{{.Names}}' | grep -q '^dashboard$'; then
+
+              echo "========================================="
+              echo "Deployment Successful"
+              echo "========================================="
+
+            else
+
+              echo "========================================="
+              echo "Deployment Failed"
+              echo "========================================="
+
+              exit 1
+
+            fi
