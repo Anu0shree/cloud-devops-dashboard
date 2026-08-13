@@ -110,7 +110,12 @@ cloud-devops-dashboard/
 ## 🚀 Quick Start (Local)
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Anu0shree/cloud-devops-dashboard.git
 cd cloud-devops-dashboard
 mvn clean package
 java -jar target/dashboard-0.0.1-SNAPSHOT.jar
+```
+
+Visit `http://localhost:8080`
+
+**Prerequisites:** Java 17, Maven, Docker, an AWS account, Terraform CLI
