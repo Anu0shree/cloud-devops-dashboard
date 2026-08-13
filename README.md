@@ -105,3 +105,11 @@ cloud-devops-dashboard/
 ├── .dockerignore
 ├── .gitignore
 └── README.md
+
+## 🚀 Quick Start (Local)
+
+```bash
+git clone <your-repo-url>
+cd cloud-devops-dashboard
+mvn clean package
+java -jar target/dashboard-0.0.1-SNAPSHOT.jar
