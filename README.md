@@ -119,3 +119,25 @@ java -jar target/dashboard-0.0.1-SNAPSHOT.jar
 Visit `http://localhost:8080`
 
 **Prerequisites:** Java 17, Maven, Docker, an AWS account, Terraform CLI
+
+## 📊 Monitoring
+
+The application exposes monitoring endpoints using **Spring Boot Actuator**.
+
+| Endpoint | Purpose |
+|----------|---------|
+| `/actuator/health` | Application health status |
+| `/actuator/prometheus` | Prometheus-formatted application metrics |
+
+Metrics collected by Prometheus are visualized through **Grafana**.
+
+The dashboard UI also provides direct links to:
+
+- Grafana
+- Application Health
+- Prometheus Metrics
+
+Grafana provides visualization of the application and infrastructure metrics collected through Prometheus.
+
+  <img width="1862" height="922" alt="image" src="https://github.com/user-attachments/assets/0ab3ffb6-d6ca-404a-8558-a1a2ca07e345" />
+
