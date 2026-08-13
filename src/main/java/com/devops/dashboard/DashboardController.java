@@ -106,7 +106,26 @@ public class DashboardController {
          * -----------------------------------------
          * Monitoring
          * -----------------------------------------
+         *
+         * These are relative URLs so they automatically
+         * use the same EC2 host and port as the dashboard.
+         *
+         * Actuator Health:
+         * /actuator/health
+         *
+         * Prometheus Metrics:
+         * /actuator/prometheus
          */
+
+        model.addAttribute(
+                "actuatorHealthUrl",
+                "/actuator/health"
+        );
+
+        model.addAttribute(
+                "prometheusUrl",
+                "/actuator/prometheus"
+        );
 
         model.addAttribute(
                 "grafanaUrl",

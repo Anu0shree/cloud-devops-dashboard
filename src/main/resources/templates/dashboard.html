@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -295,6 +296,43 @@
         }
 
         /* =========================================
+           ACTUATOR MONITORING BUTTONS
+           ========================================= */
+
+        .monitor-button {
+            display: inline-block;
+
+            margin-top: 15px;
+            margin-left: 8px;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-weight: 800;
+        }
+
+        .health-button {
+            background: #16a34a;
+        }
+
+        .health-button:hover {
+            background: #15803d;
+        }
+
+        .prometheus-button {
+            background: #2563eb;
+        }
+
+        .prometheus-button:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================================
            FOOTER
            ========================================= */
 
@@ -359,6 +397,11 @@
 
                 gap: 12px;
             }
+
+            .monitor-button {
+                margin-left: 0;
+                margin-right: 8px;
+            }
         }
 
     </style>
@@ -367,6 +410,7 @@
 
 
 <body>
+
 
 <div class="container">
 
@@ -378,11 +422,15 @@
     <div class="header">
 
         <h1>
+
             ☁️ Cloud DevOps Dashboard
+
         </h1>
 
         <p>
+
             Spring Boot • AWS EC2 • Docker • Terraform • Ansible
+
         </p>
 
     </div>
@@ -398,16 +446,22 @@
         <div class="summary-card">
 
             <div class="summary-icon">
+
                 🚀
+
             </div>
 
             <div class="summary-title">
+
                 Application
+
             </div>
 
             <div class="summary-value green"
                  th:text="${status}">
+
                 Running
+
             </div>
 
         </div>
@@ -416,16 +470,22 @@
         <div class="summary-card">
 
             <div class="summary-icon">
+
                 📦
+
             </div>
 
             <div class="summary-title">
+
                 Version
+
             </div>
 
             <div class="summary-value blue"
                  th:text="${version}">
+
                 1.0.0
+
             </div>
 
         </div>
@@ -434,16 +494,22 @@
         <div class="summary-card">
 
             <div class="summary-icon">
+
                 ☁️
+
             </div>
 
             <div class="summary-title">
+
                 Environment
+
             </div>
 
             <div class="summary-value yellow"
                  th:text="${environment}">
+
                 AWS EC2
+
             </div>
 
         </div>
@@ -452,19 +518,26 @@
         <div class="summary-card">
 
             <div class="summary-icon">
+
                 🔌
+
             </div>
 
             <div class="summary-title">
+
                 Port
+
             </div>
 
             <div class="summary-value purple"
                  th:text="${port}">
+
                 8080
+
             </div>
 
         </div>
+
 
     </div>
 
@@ -479,12 +552,17 @@
         <div class="section-header">
 
             <div class="section-title">
+
                 ☁️
+
                 EC2 Infrastructure
+
             </div>
 
             <div class="section-badge">
+
                 AWS EC2
+
             </div>
 
         </div>
@@ -494,14 +572,19 @@
 
             <table class="info-table">
 
+
                 <tr>
 
                     <td>
+
                         🖥️ Hostname
+
                     </td>
 
                     <td th:text="${hostname}">
+
                         ip-10-0-1-181
+
                     </td>
 
                 </tr>
@@ -510,11 +593,15 @@
                 <tr>
 
                     <td>
+
                         💻 Operating System
+
                     </td>
 
                     <td th:text="${os}">
+
                         Linux
+
                     </td>
 
                 </tr>
@@ -523,14 +610,19 @@
                 <tr>
 
                     <td>
+
                         ⚙️ Processors
+
                     </td>
 
                     <td th:text="${processors}">
+
                         2
+
                     </td>
 
                 </tr>
+
 
             </table>
 
@@ -549,7 +641,9 @@
         <div class="section-header">
 
             <div class="section-title">
+
                 ☕ JVM Information
+
             </div>
 
         </div>
@@ -563,11 +657,15 @@
                 <tr>
 
                     <td>
+
                         ☕ Java Version
+
                     </td>
 
                     <td th:text="${javaVersion}">
+
                         17.0.19
+
                     </td>
 
                 </tr>
@@ -576,11 +674,15 @@
                 <tr>
 
                     <td>
+
                         🧠 Free Memory
+
                     </td>
 
                     <td th:text="${jvmFreeMemory}">
+
                         28 MB
+
                     </td>
 
                 </tr>
@@ -589,11 +691,15 @@
                 <tr>
 
                     <td>
+
                         💾 Allocated Memory
+
                     </td>
 
                     <td th:text="${jvmTotalMemory}">
+
                         53 MB
+
                     </td>
 
                 </tr>
@@ -602,11 +708,15 @@
                 <tr>
 
                     <td>
+
                         📊 Maximum Memory
+
                     </td>
 
                     <td th:text="${jvmMaxMemory}">
+
                         478 MB
+
                     </td>
 
                 </tr>
@@ -615,11 +725,15 @@
                 <tr>
 
                     <td>
+
                         ⏱️ JVM Uptime
+
                     </td>
 
                     <td th:text="${jvmUptime}">
+
                         24s
+
                     </td>
 
                 </tr>
@@ -633,7 +747,7 @@
 
 
     <!-- =========================================
-         GRAFANA
+         MONITORING
          ========================================= -->
 
     <div class="section">
@@ -642,7 +756,9 @@
         <div class="section-header">
 
             <div class="section-title">
+
                 📊 Monitoring
+
             </div>
 
         </div>
@@ -650,23 +766,55 @@
 
         <div class="section-body grafana-card">
 
-            <h3>
-                Grafana Monitoring
-            </h3>
 
             <p>
+
                 View application and infrastructure metrics
+
                 through Grafana.
+
             </p>
+
+
+            <!-- =========================================
+                 GRAFANA
+                 ========================================= -->
 
             <a class="grafana-button"
                th:href="${grafanaUrl}"
                target="_blank"
                rel="noopener noreferrer">
 
-                Open Grafana
+                Grafana
 
             </a>
+
+
+            <!-- =========================================
+                 ACTUATOR HEALTH
+                 ========================================= -->
+
+            <a href="/actuator/health"
+               class="monitor-button health-button"
+               target="_blank">
+
+                Application Health
+
+            </a>
+
+
+            <!-- =========================================
+                 PROMETHEUS METRICS
+                 ========================================= -->
+
+            <a href="/actuator/prometheus"
+               class="monitor-button prometheus-button"
+               target="_blank">
+
+                Prometheus Metrics
+
+            </a>
+
 
         </div>
 
@@ -681,6 +829,7 @@
 
 
 </div>
+
 
 </body>
 
