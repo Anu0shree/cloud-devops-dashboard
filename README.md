@@ -6,45 +6,28 @@ An end-to-end DevOps project that provisions AWS infrastructure with **Terraform
 
 ## 🏗️ Architecture
 
-## 🏗️ Architecture
+```mermaid
+flowchart TD
+    A[IAM User] --> B[Terraform]
+    B --> C[AWS EC2 + Elastic IP]
+    C --> D[Ansible]
+    D --> E[Docker]
+    E --> F[Spring Boot :8080]
 
-IAM User
-   │
-   ▼
-Terraform
-   │
-   ▼
-AWS EC2 + Elastic IP
-   │
-   ▼
-Ansible
-   │
-   ▼
-Docker
-   │
-   ▼
-Spring Boot :8080
-   │
-   ├── Actuator
-   │      │
-   │      ▼
-   │   Prometheus
-   │      │
-   │      ▼
-   │   Grafana :3000
-   │
-   └── Dashboard UI
+    F --> G[Actuator]
+    G --> H[Prometheus]
+    H --> I[Grafana :3000]
 
-### 🔄 CI/CD
+    F --> J[Dashboard UI]
+```
 
-Git Push
-    ↓
-GitHub Actions
-    ↓
-Maven Build
-    ↓
-Docker Build & Push
-    ↓
-Docker Hub
-    ↓
-SSH Deployment to EC2
+## 🔄 CI/CD
+
+```mermaid
+flowchart TD
+    A[Git Push] --> B[GitHub Actions]
+    B --> C[Maven Build]
+    C --> D[Docker Build & Push]
+    D --> E[Docker Hub]
+    E --> F[SSH Deployment to EC2]
+```
