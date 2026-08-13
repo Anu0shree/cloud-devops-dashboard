@@ -105,6 +105,7 @@ cloud-devops-dashboard/
 ├── .dockerignore
 ├── .gitignore
 └── README.md
+```
 
 ## 🚀 Quick Start (Local)
 
