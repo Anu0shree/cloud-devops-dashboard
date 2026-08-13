@@ -51,3 +51,16 @@ flowchart TD
 | Spring Boot Actuator | Health and application monitoring endpoints |
 | Prometheus | Metrics collection |
 | Grafana | Metrics visualization |
+
+## ✨ Features
+
+* **Infrastructure as Code** — AWS EC2 infrastructure is provisioned using Terraform instead of manually creating the server.
+* **Automated Server Configuration** — Ansible is used to configure the EC2 environment and prepare it for application deployment.
+* **Dockerized Application** — The Spring Boot application runs inside a Docker container for consistent deployments.
+* **Automated CI/CD** — GitHub Actions builds the application, creates the Docker image, pushes it to Docker Hub, and deploys it to EC2.
+* **Versioned Docker Images** — Docker images are tagged with the Git commit SHA, making each deployment traceable to a specific source-code version.
+* **Stable EC2 Address** — An Elastic IP provides a consistent public address even when the EC2 instance is restarted.
+* **Application Dashboard** — The custom dashboard displays application status, version, environment, port, EC2 information, and JVM statistics.
+* **Application Monitoring** — Spring Boot Actuator exposes health and monitoring endpoints, with Prometheus metrics available for Grafana.
+* **Grafana Visualization** — Grafana provides dashboards for monitoring application and JVM metrics.
+
