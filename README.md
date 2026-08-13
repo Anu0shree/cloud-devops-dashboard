@@ -17,3 +17,15 @@ flowchart TD
     G --> H[Prometheus]
     H --> I[Grafana :3000]
 ```
+
+### CI/CD
+```mermaid
+flowchart LR
+    A[Git Push] --> B[GitHub Actions]
+    B --> C[Maven Build]
+    C --> D[Docker Build & Tag]
+    D --> E[Docker Hub]
+    E --> F[SSH to EC2]
+    F --> G[Pull Image by SHA]
+    G --> H[Restart Container]
+```
