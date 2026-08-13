@@ -64,3 +64,44 @@ flowchart TD
 * **Application Monitoring** — Spring Boot Actuator exposes health and monitoring endpoints, with Prometheus metrics available for Grafana.
 * **Grafana Visualization** — Grafana provides dashboards for monitoring application and JVM metrics.
 
+## 📂 Project Structure
+
+```text
+cloud-devops-dashboard/
+│
+├── .github/
+│   └── workflows/
+│       └── deploy.yml                 # GitHub Actions CI/CD pipeline
+│
+├── ansible/
+│   ├── ansible.cfg                    # Ansible configuration
+│   └── deploy.yaml                    # EC2 server configuration/deployment
+│
+├── terraform/
+│   ├── main.tf                        # EC2 infrastructure
+│   ├── provider.tf                    # AWS provider configuration
+│   ├── variables.tf                   # Terraform variables
+│   ├── outputs.tf                     # Terraform outputs
+│   ├── terraform.tfvars               # Infrastructure values
+│   └── .terraform.lock.hcl            # Provider dependency lock
+│
+├── src/
+│   ├── main/
+│   │   ├── java/com/devops/dashboard/
+│   │   │   ├── DashboardApplication.java
+│   │   │   └── DashboardController.java
+│   │   │
+│   │   └── resources/
+│   │       ├── templates/
+│   │       │   └── dashboard.html      # Dashboard UI
+│   │       └── application.properties # Application configuration
+│   │
+│   └── test/                           # Application tests
+│
+├── Dockerfile                          # Docker image configuration
+├── pom.xml                             # Maven configuration
+├── mvnw                                # Maven wrapper
+├── mvnw.cmd                            # Maven wrapper for Windows
+├── .dockerignore
+├── .gitignore
+└── README.md
