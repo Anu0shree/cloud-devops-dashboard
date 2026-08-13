@@ -141,3 +141,11 @@ Grafana provides visualization of the application and infrastructure metrics col
 
   <img width="1862" height="922" alt="image" src="https://github.com/user-attachments/assets/0ab3ffb6-d6ca-404a-8558-a1a2ca07e345" />
 
+## 🧩 Problem Solved: CI/CD Race Condition
+
+Overlapping GitHub Actions runs could occasionally deploy a stale Docker image to EC2 when an older workflow reached the deployment step after a newer build.
+
+Fixed with:
+
+1. **Concurrency control** — `cancel-in-progress: true` cancels superseded workflow runs.
+2. **SHA-based image tagging** — EC2 pulls the Docker image tagged with the exact Git commit SHA instead of relying only on `latest`.
