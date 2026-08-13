@@ -20,7 +20,7 @@ public class DashboardController {
     @Value("${server.port:8080}")
     private String serverPort;
 
-    @Value("${app.grafana-url:http://localhost:3000}")
+    @Value("${app.grafana-url}")
     private String grafanaUrl;
 
     /*
