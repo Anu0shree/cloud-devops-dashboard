@@ -200,7 +200,7 @@ The dashboard UI also provides direct links to:
   ![Prometheus](screenshots/prometheus.png)
   
 ### 💚 Application Health
-![Health](screenshots/application health.png)
+![health](screenshots/health.png)
 
 ### 🐳 Docker Hub
 ![dockerhub](screenshots/dockerhub.png)
@@ -209,7 +209,7 @@ The dashboard UI also provides direct links to:
 ![github-actions](screenshots/github-actions.png)
 
 ### ☁️ AWS EC2
-
+![EC2](screenshots/awsEc2.png)
 
 
 ## 🧹 Teardown
