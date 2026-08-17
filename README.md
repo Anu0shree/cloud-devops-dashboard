@@ -152,6 +152,22 @@ ansible-playbook -i <EC2_PUBLIC_IP>, deploy.yaml
 
 Push changes to the main branch.
 
+GitHub Actions will:
+
+Git Push
+   ↓
+Maven Build
+   ↓
+Docker Build & Push
+   ↓
+Docker Hub
+   ↓
+SSH Deployment to EC2
+   ↓
+Pull Image by Git SHA
+   ↓
+Restart Container
+
 Prerequisites
 
 Java 17, Maven, Docker, AWS account, AWS IAM credentials, Terraform CLI, Ansible, SSH access to the EC2 instance
