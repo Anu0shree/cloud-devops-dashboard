@@ -107,7 +107,9 @@ cloud-devops-dashboard/
 └── README.md
 ```
 
-## 🚀 Quick Start (Local)
+## 🚀 Getting Started
+
+Option 1: Run Locally
 
 ```bash
 git clone https://github.com/Anu0shree/cloud-devops-dashboard.git
@@ -118,7 +120,39 @@ java -jar target/dashboard-0.0.1-SNAPSHOT.jar
 
 Visit `http://localhost:8080`
 
-**Prerequisites:** Java 17, Maven, Docker, an AWS account, Terraform CLI
+Option 2: Deploy on AWS
+
+Note: The original AWS EC2 instance used for this project has been terminated to avoid ongoing AWS costs. The infrastructure is fully reproducible using Terraform, Ansible, and GitHub Actions.
+
+1. Provision AWS infrastructure
+
+```bash
+cd terraform
+terraform init
+terraform apply
+```
+Terraform provisions the required AWS infrastructure, including the EC2 instance
+
+2. Configure the EC2 instance with Ansible
+```bash
+cd ../ansible
+ansible-playbook -i <EC2_PUBLIC_IP>, deploy.yaml
+```
+
+3. Deploy through GitHub Actions
+
+Push changes to the main branch.
+
+Prerequisites
+
+Java 17
+Maven
+Docker
+AWS account
+AWS IAM credentials
+Terraform CLI
+Ansible
+SSH access to the EC2 instance
 
 ## 📊 Monitoring
 
@@ -149,3 +183,17 @@ Fixed with:
 
 1. **Concurrency control** — `cancel-in-progress: true` cancels superseded workflow runs.
 2. **SHA-based image tagging** — EC2 pulls the Docker image tagged with the exact Git commit SHA instead of relying only on `latest`.
+
+## 🧹 Teardown
+
+To remove the AWS infrastructure and avoid ongoing AWS charges:
+```bash
+cd terraform
+terraform destroy
+```
+
+## 👤 Author
+
+Anushree Venkatraju
+
+Built as an end-to-end DevOps and Cloud deployment project using AWS, Terraform, Ansible, Docker, GitHub Actions, Spring Boot, Prometheus, and Grafana.
