@@ -145,14 +145,7 @@ Push changes to the main branch.
 
 Prerequisites
 
-Java 17
-Maven
-Docker
-AWS account
-AWS IAM credentials
-Terraform CLI
-Ansible
-SSH access to the EC2 instance
+Java 17, Maven, Docker, AWS account, AWS IAM credentials, Terraform CLI, Ansible, SSH access to the EC2 instance
 
 ## 📊 Monitoring
 
