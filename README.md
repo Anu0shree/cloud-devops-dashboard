@@ -191,9 +191,26 @@ The dashboard UI also provides direct links to:
 - Application Health
 - Prometheus Metrics
 
-Grafana provides visualization of the application and infrastructure metrics collected through Prometheus.
+## 📸 Screenshots
 
+### 📈 Grafana Monitoring
   ![Grafana](screenshots/Grafana.png)
+
+### 📊 Prometheus Metrics
+  ![Prometheus](screenshots/prometheus.png)
+  
+### 💚 Application Health
+![Health](screenshots/application health.png)
+
+### 🐳 Docker Hub
+![dockerhub](screenshots/dockerhub.png)
+
+### ⚙️ GitHub Actions
+![github-actions](screenshots/github-actions.png)
+
+### ☁️ AWS EC2
+
+
 
 ## 🧹 Teardown
 
