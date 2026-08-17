@@ -64,6 +64,15 @@ flowchart TD
 * **Application Monitoring** — Spring Boot Actuator exposes health and monitoring endpoints, with Prometheus metrics available for Grafana.
 * **Grafana Visualization** — Grafana provides dashboards for monitoring application and JVM metrics.
 
+ ## 🧩 Problem Solved: CI/CD Race Condition
+
+Overlapping GitHub Actions runs could occasionally deploy a stale Docker image to EC2 when an older workflow reached the deployment step after a newer build.
+
+Fixed with:
+
+1. **Concurrency control** — `cancel-in-progress: true` cancels superseded workflow runs.
+2. **SHA-based image tagging** — EC2 pulls the Docker image tagged with the exact Git commit SHA instead of relying only on `latest`.
+ 
 ## 📂 Project Structure
 
 ```text
@@ -109,7 +118,7 @@ cloud-devops-dashboard/
 
 ## 🚀 Getting Started
 
-Option 1: Run Locally
+# Option 1: Run Locally
 
 ```bash
 git clone https://github.com/Anu0shree/cloud-devops-dashboard.git
@@ -120,7 +129,7 @@ java -jar target/dashboard-0.0.1-SNAPSHOT.jar
 
 Visit `http://localhost:8080`
 
-Option 2: Deploy on AWS
+# Option 2: Deploy on AWS
 
 Note: The original AWS EC2 instance used for this project has been terminated to avoid ongoing AWS costs. The infrastructure is fully reproducible using Terraform, Ansible, and GitHub Actions.
 
@@ -167,15 +176,6 @@ The dashboard UI also provides direct links to:
 Grafana provides visualization of the application and infrastructure metrics collected through Prometheus.
 
   ![Grafana](screenshots/Grafana.png)
-
-## 🧩 Problem Solved: CI/CD Race Condition
-
-Overlapping GitHub Actions runs could occasionally deploy a stale Docker image to EC2 when an older workflow reached the deployment step after a newer build.
-
-Fixed with:
-
-1. **Concurrency control** — `cancel-in-progress: true` cancels superseded workflow runs.
-2. **SHA-based image tagging** — EC2 pulls the Docker image tagged with the exact Git commit SHA instead of relying only on `latest`.
 
 ## 🧹 Teardown
 
