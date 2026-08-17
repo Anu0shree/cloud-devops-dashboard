@@ -118,7 +118,7 @@ cloud-devops-dashboard/
 
 ## 🚀 Getting Started
 
-# Option 1: Run Locally
+## Option 1: Run Locally
 
 ```bash
 git clone https://github.com/Anu0shree/cloud-devops-dashboard.git
@@ -129,7 +129,7 @@ java -jar target/dashboard-0.0.1-SNAPSHOT.jar
 
 Visit `http://localhost:8080`
 
-# Option 2: Deploy on AWS
+## Option 2: Deploy on AWS
 
 Note: The original AWS EC2 instance used for this project has been terminated to avoid ongoing AWS costs. The infrastructure is fully reproducible using Terraform, Ansible, and GitHub Actions.
 
