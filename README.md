@@ -154,6 +154,7 @@ Push changes to the main branch.
 
 GitHub Actions will:
 
+```text
 Git Push
    ↓
 Maven Build
@@ -167,6 +168,7 @@ SSH Deployment to EC2
 Pull Image by Git SHA
    ↓
 Restart Container
+```
 
 Prerequisites
 
