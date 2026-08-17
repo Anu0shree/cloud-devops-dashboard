@@ -139,7 +139,7 @@ The dashboard UI also provides direct links to:
 
 Grafana provides visualization of the application and infrastructure metrics collected through Prometheus.
 
-  <img width="1862" height="922" alt="image" src="https://github.com/user-attachments/assets/0ab3ffb6-d6ca-404a-8558-a1a2ca07e345" />
+  ![Grafana](screenshots/Grafana.png)
 
 ## 🧩 Problem Solved: CI/CD Race Condition
 
