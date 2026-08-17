@@ -133,7 +133,7 @@ Visit `http://localhost:8080`
 
 Note: The original AWS EC2 instance used for this project has been terminated to avoid ongoing AWS costs. The infrastructure is fully reproducible using Terraform, Ansible, and GitHub Actions.
 
-1. Provision AWS infrastructure
+### 1. Provision AWS infrastructure
 
 ```bash
 cd terraform
@@ -142,13 +142,13 @@ terraform apply
 ```
 Terraform provisions the required AWS infrastructure, including the EC2 instance
 
-2. Configure the EC2 instance with Ansible
+### 2. Configure the EC2 instance with Ansible
 ```bash
 cd ../ansible
 ansible-playbook -i <EC2_PUBLIC_IP>, deploy.yaml
 ```
 
-3. Deploy through GitHub Actions
+### 3. Deploy through GitHub Actions
 
 Push changes to the main branch.
 
@@ -170,7 +170,7 @@ Pull Image by Git SHA
 Restart Container
 ```
 
-Prerequisites
+### Prerequisites
 
 Java 17, Maven, Docker, AWS account, AWS IAM credentials, Terraform CLI, Ansible, SSH access to the EC2 instance
 
